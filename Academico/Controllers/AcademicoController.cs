@@ -26,5 +26,27 @@ namespace Academico.Controllers
             alunos.Add(aluno);
             return RedirectToAction("Index");
         }
+
+        public IActionResult Edit(int id) 
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            return View(alunos.Where(a => a.Id == id).FirstOrDefault());       
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public IActionResult Edit(Aluno aluno)
+        {
+            alunos.Remove(alunos.Where(a => a.Id == aluno.Id).FirstOrDefault());
+            alunos.Add(aluno);
+            return RedirectToAction("Indez");
+               
+
+        }
     }
 }
