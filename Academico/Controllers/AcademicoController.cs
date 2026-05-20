@@ -18,13 +18,16 @@ namespace Academico.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Aluno aluno)
         {
-            aluno.Id = alunos.Count + 1;
+            aluno.Id = (alunos != null && alunos.Any()) ? alunos.Max(a => a.Id) + 1 : 1;
+
             alunos.Add(aluno);
-            return RedirectToAction("Index");
+
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Edit(int id) 
@@ -44,9 +47,58 @@ namespace Academico.Controllers
         {
             alunos.Remove(alunos.Where(a => a.Id == aluno.Id).FirstOrDefault());
             alunos.Add(aluno);
-            return RedirectToAction("Indez");
+            return RedirectToAction("Index");
                
 
         }
+
+
+        // GET
+        public IActionResult Delete(int id)
+        {
+            var aluno = alunos.FirstOrDefault(a => a.Id == id);
+
+            if (aluno == null)
+            {
+                return NotFound();
+            }
+
+            return View(aluno);
+        }
+
+        // POST
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var aluno = alunos.FirstOrDefault(a => a.Id == id);
+
+            if (aluno == null)
+            {
+                return NotFound();
+            }
+
+            alunos.Remove(aluno);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        ///sem tela de confirmação
+        /*
+         * public IActionResult Delete(int id)
+            {
+                var aluno = alunos.FirstOrDefault(a => a.Id == id);
+
+                if (aluno == null)
+                {
+                    return NotFound();
+                }
+
+                alunos.Remove(aluno);
+
+                return RedirectToAction(nameof(Index));
+            }
+         */
+
     }
 }
